@@ -7,8 +7,9 @@ from geometry_msgs.msg import TransformStamped
 from aabm_comms.msg import Waypoint, Trajectory_sngl, Trajectory
 import math
 
+
 class TrajectoryTests():
-    def __init__(self):    
+    def __init__(self):
 
         # Make publisher
         rospy.init_node('trajectory_tests', anonymous=True)
@@ -33,9 +34,9 @@ class TrajectoryTests():
         while not rospy.is_shutdown() and start < end:
 
             new_trajectory = Trajectory() #creating new_trajectory to store the trajectory
-                        
+
             this_position = rospy.wait_for_message(self.odom_topic, Odometry) #getting the current position of the drone
-            
+
             #x_pos = 0.0
             #y_pos = 3.0
             z_pos = 0.5
@@ -65,7 +66,7 @@ class TrajectoryTests():
             traj_single.position.y = 0.0
             traj_single.position.z = z_pos
             traj_single.yaw = 0
-            traj_single.timeMilliseconds = 3000 #time_milliseconds 
+            traj_single.timeMilliseconds = 3000 #time_milliseconds
 
             new_trajectory.trajectory.append(traj_single)
 
@@ -73,8 +74,8 @@ class TrajectoryTests():
             #Now the second point and so on
             #We load the csv with the waypoints
             wp_csv = np.loadtxt('/home/aml/ucl_ws/src/example_trajectory_publisher/src/circle_waypoints_2_5_1200.csv', delimiter=",")
-            
-            
+
+
             for i in range(1200):
                 traj_single = Trajectory_sngl()
 
@@ -86,9 +87,9 @@ class TrajectoryTests():
 
                 new_trajectory.trajectory.append(traj_single)
 
-           
+
             rospy.logwarn('Waiting for initialisation') #wait 5 sec to allow the system to initialise
-            
+
 
             for i in range(5):
                 rospy.logwarn(5 - i)
@@ -99,7 +100,7 @@ class TrajectoryTests():
             new_trajectory.clearQueue = self.clear_queue
 
             new_trajectory.header.stamp = rospy.Time.now()
-            
+
             self.trajectory_publisher.publish(new_trajectory)
 
             #countdown to finish the trajectory
@@ -115,7 +116,7 @@ class TrajectoryTests():
 
             rospy.logwarn('End')
 
-            
+
             start = end #to exit the program
 
 
