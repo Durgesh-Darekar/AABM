@@ -8,7 +8,7 @@ traj_reference_topic = select(bag,'Topic','/ucl_0/autopilot/TrajectoryReference'
 traj_messages = readMessages(traj_reference_topic,'DataFormat','struct');
 odom_messages = readMessages(estimated_odom_topic,'DataFormat','struct');
 
-%No. 2 in the above bag is to go to the starting position i.e. 0,0,1.5
+%No. 2 in the above bag is to go to the starting position
 
 for i = 1:122
    traj{i,1} = traj_messages{1,1}.Trajectory(i).Position.X;
