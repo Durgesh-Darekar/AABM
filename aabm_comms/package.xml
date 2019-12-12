@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>aabm_comms</name>
+  <version>0.0.0</version>
+  <description>The aabm_comms package</description>
+
+  <maintainer email="dt214@ic.ac.uk">dimos</maintainer>
+
+
+  <!-- One license tag required, multiple allowed, one license per tag -->
+  <!-- Commonly used license strings: -->
+  <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
+  <license>TODO</license>
+
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>message_generation</build_depend>
+  <exec_depend>message_runtime</exec_depend>
+</package>
