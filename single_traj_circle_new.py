@@ -96,18 +96,6 @@ class TrajectoryTests():
         # while not shutting down
         while not rospy.is_shutdown() and current_time < end_time:
 
-            #while current_time < end_time:
-
-                #rospy.logwarn(current_time)
-                
-                #time_milliseconds = current_time * 1000    
-
-                #new_trajectory.trajectory[current_time].position.x = x_pos
-                #new_trajectory.trajectory[current_time].position.y = y_pos
-                #new_trajectory.trajectory[current_time].position.z = 0.5
-                #new_trajectory.trajectory[current_time].timeMilliseconds = time_milliseconds
-            
-
             new_trajectory = Trajectory()
             traj_single = Trajectory_sngl()
             
