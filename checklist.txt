@@ -1,0 +1,99 @@
+ROS topics:
+
+    /ucl_0/autopilot/AutopilotStatus              aabm_comms/AutopilotStatus
+    /ucl_0/autopilot/PositionReference            geometry_msgs/PointStamped
+    /ucl_0/autopilot/TrajectoryReference          aabm_comms/Trajectory
+    /ucl_0/mavlink/from                           mavros_msgs/Mavlink
+    /ucl_0/mavros/altitude                        mavros_msgs/Altitude
+    /ucl_0/mavros/battery                         sensor_msgs/BatteryState
+    /ucl_0/mavros/extended_state                  mavros_msgs/ExtendedState
+    /ucl_0/mavros/imu/data                        sensor_msgs/Imu
+    /ucl_0/mavros/imu/data_raw                    sensor_msgs/Imu
+    /ucl_0/mavros/imu/mag                         sensor_msgs/MagneticField
+    /ucl_0/mavros/imu/static_pressure             sensor_msgs/FluidPressure
+    /ucl_0/mavros/imu/temperature_imu             sensor_msgs/Temperature
+    /ucl_0/mavros/local_position/odom             nav_msgs/Odometry
+    /ucl_0/mavros/local_position/pose             geometry_msgs/PoseStamped
+    /ucl_0/mavros/local_position/velocity_body    geometry_msgs/TwistStamped
+    /ucl_0/mavros/local_position/velocity_local   geometry_msgs/TwistStamped
+    /ucl_0/mavros/manual_control/control          mavros_msgs/ManualControl
+    /ucl_0/mavros/mission/waypoints               mavros_msgs/WaypointList
+    /ucl_0/mavros/rc/in                           mavros_msgs/RCIn
+    /ucl_0/mavros/rc/out                          mavros_msgs/RCOut
+    /ucl_0/mavros/setpoint_raw/attitude           mavros_msgs/AttitudeTarget
+    /ucl_0/mavros/setpoint_raw/target_attitude    mavros_msgs/AttitudeTarget
+    /ucl_0/mavros/state                           mavros_msgs/State
+    /ucl_0/mavros/statustext/recv                 mavros_msgs/StatusText
+    /ucl_0/mavros/target_actuator_control         mavros_msgs/ActuatorControl
+    /ucl_0/mavros/time_reference                  sensor_msgs/TimeReference
+    /ucl_0/mavros/timesync_status                 mavros_msgs/TimesyncStatus
+    /ucl_0/mavros/vfr_hud                         mavros_msgs/VFR_HUD
+    /ucl_0/mpc_node/parameter_descriptions        dynamic_reconfigure/ConfigDescription
+    /ucl_0/mpc_node/parameter_updates             dynamic_reconfigure/Config
+    /ucl_0/vrpn_client/estimated_odometry         nav_msgs/Odometry
+    /vrpn_client_node/ucl_0/pose                  geometry_msgs/PoseWithCovarianceStamped
+
+
+Topics we want to place emphasis on checking:
+
+    /ucl_0/autopilot/AutopilotStatus              aabm_comms/AutopilotStatus
+    /ucl_0/mavros/imu/mag                         sensor_msgs/MagneticField
+    /ucl_0/mavros/local_position/odom             nav_msgs/Odometry
+    /ucl_0/mavros/local_position/pose             geometry_msgs/PoseStamped
+    /ucl_0/mavros/local_position/velocity_body    geometry_msgs/TwistStamped
+    /ucl_0/mavros/local_position/velocity_local   geometry_msgs/TwistStamped
+    /ucl_0/mavros/state                           mavros_msgs/State
+    /ucl_0/mavros/statustext/recv                 mavros_msgs/StatusText
+    /ucl_0/vrpn_client/estimated_odometry         nav_msgs/Odometry
+    /vrpn_client_node/ucl_0/pose                  geometry_msgs/PoseWithCovarianceStamped
+
+
+    aabm_comms/AutopilotStatus
+
+        Header header
+        uint8 activeTask
+        uint8 trajectoryCmdMode
+
+        # Active task enum
+        uint8 LANDED          = 1
+        uint8 FLYING          = 2
+        uint8 TAKING_OFF      = 3
+        uint8 LANDING         = 4
+        uint8 RETURN2HOME     = 5
+
+        # Trajectory Mode
+        uint8 IDLE             = 6
+        uint8 INITIAL_WAYPOINT = 7
+        uint8 TRAJECTORY       = 8
+        uint8 WAYPOINT         = 9
+        uint8 UNDEFINED        = 10
+
+
+    sensor_msgs/MagneticField
+
+		Header header
+		geometry_msgs/Vector3 magnetic_field
+		float64[9] magnetic_field_covariance
+
+	mavros_msgs/State
+
+		std_msgs/Header header
+		bool armed
+		bool guided
+		string mode
+
+	mavros_msgs/StatusText
+		# Severity levels
+		uint8 EMERGENCY = 0
+		uint8 ALERT = 1
+		uint8 CRITICAL = 2
+		uint8 ERROR = 3
+		uint8 WARNING = 4
+		uint8 NOTICE = 5
+		uint8 INFO = 6
+		uint8 DEBUG = 7
+
+		# Fields
+		std_msgs/Header header
+		uint8 severity
+		string text
