@@ -72,97 +72,69 @@ def generate_circle_trajectory(nb_waypoints, diameter):
     return waypoints
 
 
-class TrajectoryPublisher():
-    def __init__(self):
-        rospy.init_node('trajectory_circle', anonymous=True)
-        self.rate = rospy.Rate(1)
-        self.trajectory_publisher = rospy.Publisher(TRAJ_REF_TOPIC, Trajectory, queue_size=10)
-        self.clear_queue = False # as we do not need to clear the previous trajectory in this case
-
-    def run(self):
-        rospy.logwarn('Starting Trajectory Tests')
-        start = 0
-        end = 1
-
-        while not rospy.is_shutdown() and start < end:
-            new_trajectory = Trajectory()
-            this_position = rospy.wait_for_message(ODOM_TOPIC, Odometry) #getting the current position of the drone
-
-            #x_pos = 0.0
-            #y_pos = 3.0
-            z_pos = TRAJ_ALTITUDE
-
-            # Setting initial waypoint which should be the current position.
-            waypoint = Waypoint()
-            waypoint.position.x = this_position.pose.pose.position.x
-            waypoint.position.y = this_position.pose.pose.position.y
-            waypoint.position.z = this_position.pose.pose.position.z
-            new_trajectory.initialWaypoint = waypoint
-
-            # Start the trajectory with the 0th point being the same as the initial waypoint.
-            traj_single = Trajectory_sngl()
-            traj_single.position.x = waypoint.position.x
-            traj_single.position.y = waypoint.position.y
-            traj_single.position.z = waypoint.position.z
-            traj_single.timeMilliseconds = 0
-            new_trajectory.trajectory.append(traj_single)
-
-            # Issuing a point for it to go to the start point, to ensure it stays same always
-            traj_single = Trajectory_sngl()
-            traj_single.position.x = 0.0
-            traj_single.position.y = 0.0
-            traj_single.position.z = z_pos
-            traj_single.yaw = 0
-            traj_single.timeMilliseconds = 3000
-            new_trajectory.trajectory.append(traj_single)
-
-            # Generate trajectory waypoints
-            waypoints = generate_circle_trajectory(NB_WAYPOINTS, CIRCLE_DIAMETER)
-            assert(waypoints.shape[0] == NB_WAYPOINTS)
-            assert(waypoints.shape[1] == 2)
-
-            for i in range(NB_WAYPOINTS):
-                traj_single = Trajectory_sngl()
-                traj_single.position.x = waypoints[i, 0]
-                traj_single.position.y = waypoints[i, 1]
-                traj_single.position.z = z_pos
-                traj_single.yaw = - (0.005236 * (i + 1))
-                traj_single.timeMilliseconds = 3000 + (50 * (i + 1)) # time_ms - 1 second/point
-                new_trajectory.trajectory.append(traj_single)
-
-            # Wait 5 secs to allow the system to initialise
-            rospy.logwarn('Waiting for initialisation')
-            for i in range(5):
-                rospy.logwarn(5 - i)
-                self.rate.sleep()
-
-            # Start publishing trajectory
-            rospy.logwarn('Lets start') #issue the trajectory now
-            new_trajectory.clearQueue = self.clear_queue
-            new_trajectory.header.stamp = rospy.Time.now()
-            self.trajectory_publisher.publish(new_trajectory)
-
-            # Countdown to start of trajectory
-            for i in range(3):
-                rospy.logwarn(3 - i)
-                self.rate.sleep()
-
-            rospy.logwarn('Reached starting position. Beginning trajectory.')
-            for i in range(60):
-                rospy.logwarn(60 - i)
-                self.rate.sleep()
-
-            rospy.logwarn('End')
-            start = end # to exit the program
+def test_generate_circle_trajectory():
+    import matplotlib.pylab as plt
+    waypoints = generate_circle_trajectory(NB_WAYPOINTS, CIRCLE_DIAMETER)
+    plt.plot(waypoints[:, 0], waypoints[:, 1])
+    plt.show()
 
 
 if __name__ == '__main__':
-    # waypoints = generate_circle_trajectory(NB_WAYPOINTS, CIRCLE_DIAMETER)
-    # import matplotlib.pylab as plt
-    # plt.plot(waypoints[:, 0], waypoints[:, 1])
-    # plt.show()
+    # Start ROS node
+    rospy.init_node('trajectory_circle', anonymous=True)
+    node_rate = rospy.Rate(1)
+    traj_pub = rospy.Publisher(TRAJ_REF_TOPIC, Trajectory, queue_size=10)
+    clear_queue = False  # Do not need to clear previous trajectory
 
-    try:
-        TrajectoryPublisher().run()
-    except rospy.ROSInterruptException:
-        pass
+    # Wait 5 secs to allow the ros node to initialise
+    rospy.loginfo('Starting ros node ...')
+    for i in range(5):
+        rospy.loginfo(5 - i)
+        node_rate.sleep()
+
+    # Build trajectory
+    rospy.loginfo('Generating circle trajectory')
+    circle_traj = Trajectory()
+    # -- Get drone odometery
+    drone_odom = rospy.wait_for_message(ODOM_TOPIC, Odometry)
+    # -- Setting initial waypoint which should be the current position.
+    waypoint = Waypoint()
+    waypoint.position.x = drone_odom.pose.pose.position.x
+    waypoint.position.y = drone_odom.pose.pose.position.y
+    waypoint.position.z = drone_odom.pose.pose.position.z
+    circle_traj.initialWaypoint = waypoint
+    # -- Start the trajectory with the 0th point (same as the initial waypoint).
+    traj_single = Trajectory_sngl()
+    traj_single.position.x = waypoint.position.x
+    traj_single.position.y = waypoint.position.y
+    traj_single.position.z = waypoint.position.z
+    traj_single.timeMilliseconds = 0
+    circle_traj.trajectory.append(traj_single)
+    # -- Issuing a point for start point, to ensure it stays same always
+    traj_single = Trajectory_sngl()
+    traj_single.position.x = 0.0
+    traj_single.position.y = 0.0
+    traj_single.position.z = TRAJ_ALTITUDE
+    traj_single.yaw = 0
+    traj_single.timeMilliseconds = 3000
+    circle_traj.trajectory.append(traj_single)
+    # -- Generate trajectory waypoints
+    waypoints = generate_circle_trajectory(NB_WAYPOINTS, CIRCLE_DIAMETER)
+    assert(waypoints.shape[0] == NB_WAYPOINTS)
+    assert(waypoints.shape[1] == 2)
+    for i in range(NB_WAYPOINTS):
+        traj_single = Trajectory_sngl()
+        traj_single.position.x = waypoints[i, 0]
+        traj_single.position.y = waypoints[i, 1]
+        traj_single.position.z = TRAJ_ALTITUDE
+        traj_single.yaw = - (0.005236 * (i + 1))
+        traj_single.timeMilliseconds = 3000 + (50 * (i + 1))
+        # time_ms - 1 second/point
+
+        circle_traj.trajectory.append(traj_single)
+
+    # Publish the trajectory
+    rospy.loginfo('Publishing trajectory')
+    circle_traj.clearQueue = clear_queue
+    circle_traj.header.stamp = rospy.Time.now()
+    traj_pub.publish(circle_traj)
