@@ -29,7 +29,7 @@ if __name__ == "__main__":
     rospy.Subscriber(ODOM_TOPIC, Odometry, odom_cb)
     rospy.Subscriber(VICON_TOPIC, PoseWithCovarianceStamped, vicon_cb)
 
-    while True:
+    while not rospy.is_shutdown():
         # Check odom
         if odom_last_update and (time.time() - odom_last_update) > timeout_threshold:
             rospy.logerr("Odom is NOT PUBLISHING!")

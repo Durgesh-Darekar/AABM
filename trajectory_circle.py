@@ -13,8 +13,8 @@ from aabm_comms.msg import Trajectory
 from aabm_comms.msg import Trajectory_sngl
 
 NB_WAYPOINTS = 1200
-CIRCLE_DIAMETER = 2.3
-TRAJ_ALTITUDE = 0.5
+CIRCLE_DIAMETER = 2.5
+TRAJ_ALTITUDE = 0.4
 TRAJ_REF_TOPIC = '/ucl_0/autopilot/TrajectoryReference'
 ODOM_TOPIC = '/ucl_0/vrpn_client/estimated_odometry'
 
@@ -79,6 +79,8 @@ def test_generate_circle_trajectory():
 
 
 if __name__ == '__main__':
+    # test_generate_circle_trajectory()
+
     # Start ROS node
     rospy.init_node('trajectory_circle', anonymous=True)
     node_rate = rospy.Rate(1)
@@ -140,4 +142,10 @@ if __name__ == '__main__':
     circle_traj.clearQueue = clear_queue
     circle_traj.header.stamp = rospy.Time.now()
     traj_pub.publish(circle_traj)
+
+    # Wait 5 secs to allow the ros node to shutdown
+    rospy.loginfo('Shutting down ros node ...')
+    for i in range(5):
+        rospy.loginfo(5 - i)
+        node_rate.sleep()
     rospy.loginfo('Done!')
