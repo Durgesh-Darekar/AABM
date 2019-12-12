@@ -1,16 +1,16 @@
 clear all;
 clc;
 
-bag = rosbag('scan_drone_120_points.bag');
-estimated_odom_topic = select(bag,'Topic','/ucl_0/vrpn_client/estimated_odometry');
-traj_reference_topic = select(bag,'Topic','/ucl_0/autopilot/TrajectoryReference');
+bag = rosbag('enter_name_of_bag.bag');
+estimated_odom_topic = select(bag,'Topic','/ucl_0/vrpn_client/estimated_odometry'); %Topic name for odometry
+traj_reference_topic = select(bag,'Topic','/ucl_0/autopilot/TrajectoryReference'); %Topic name for trajectory sent
 
 traj_messages = readMessages(traj_reference_topic,'DataFormat','struct');
 odom_messages = readMessages(estimated_odom_topic,'DataFormat','struct');
 
 %No. 2 in the above bag is to go to the starting position
 
-for i = 1:122
+for i = 1:1202
    traj{i,1} = traj_messages{1,1}.Trajectory(i).Position.X;
    traj{i,2} = traj_messages{1,1}.Trajectory(i).Position.Y;
    traj{i,3} = traj_messages{1,1}.Trajectory(i).Position.Z;
@@ -19,7 +19,7 @@ end
 
 traj_mat = cellfun(@(tr) double(tr), traj);
 
-for i = 1:1867
+for i = 1:1867 %1867 changes according to when we start the bag. Check required.
    odom{i,1} = odom_messages{i,1}.Pose.Pose.Position.X;
    odom{i,2} = odom_messages{i,1}.Pose.Pose.Position.Y;
    odom{i,3} = odom_messages{i,1}.Pose.Pose.Position.Z;
