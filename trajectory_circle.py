@@ -92,22 +92,25 @@ if __name__ == '__main__':
         rospy.loginfo(5 - i)
         node_rate.sleep()
 
+    # Get drone odometery
+    rospy.loginfo('Waiting for drone odom msg')
+    drone_odom = rospy.wait_for_message(ODOM_TOPIC, Odometry)
+    rospy.loginfo(str(drom_odom))
+
     # Build trajectory
     rospy.loginfo('Generating circle trajectory')
     circle_traj = Trajectory()
-    # -- Get drone odometery
-    drone_odom = rospy.wait_for_message(ODOM_TOPIC, Odometry)
     # -- Setting initial waypoint which should be the current position.
-    waypoint = Waypoint()
-    waypoint.position.x = drone_odom.pose.pose.position.x
-    waypoint.position.y = drone_odom.pose.pose.position.y
-    waypoint.position.z = drone_odom.pose.pose.position.z
-    circle_traj.initialWaypoint = waypoint
+    wp_init = Waypoint()
+    wp_init.position.x = drone_odom.pose.pose.position.x
+    wp_init.position.y = drone_odom.pose.pose.position.y
+    wp_init.position.z = drone_odom.pose.pose.position.z
+    circle_traj.initialWaypoint = wp_init
     # -- Start the trajectory with the 0th point (same as the initial waypoint).
     traj_single = Trajectory_sngl()
-    traj_single.position.x = waypoint.position.x
-    traj_single.position.y = waypoint.position.y
-    traj_single.position.z = waypoint.position.z
+    traj_single.position.x = wp_init.position.x
+    traj_single.position.y = wp_init.position.y
+    traj_single.position.z = wp_init.position.z
     traj_single.timeMilliseconds = 0
     circle_traj.trajectory.append(traj_single)
     # -- Issuing a point for start point, to ensure it stays same always
@@ -116,7 +119,7 @@ if __name__ == '__main__':
     traj_single.position.y = 0.0
     traj_single.position.z = TRAJ_ALTITUDE
     traj_single.yaw = 0
-    traj_single.timeMilliseconds = 3000
+    traj_single.timeMilliseconds = 3000  # Give MAV 3s to reach start position
     circle_traj.trajectory.append(traj_single)
     # -- Generate trajectory waypoints
     waypoints = generate_circle_trajectory(NB_WAYPOINTS, CIRCLE_DIAMETER)
@@ -138,3 +141,4 @@ if __name__ == '__main__':
     circle_traj.clearQueue = clear_queue
     circle_traj.header.stamp = rospy.Time.now()
     traj_pub.publish(circle_traj)
+    rospy.loginfo('Done!')

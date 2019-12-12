@@ -1,5 +1,5 @@
 #!/bin/bash
 set -e  # exit on first error
 
-# octave circle_waypoints_generation.m
-python trajectory_circle.py
+# python trajectory_circle.py
+python topic_checker.py
