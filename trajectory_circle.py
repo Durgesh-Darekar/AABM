@@ -31,10 +31,9 @@ def generate_circle_trajectory(nb_waypoints, diameter):
     # Generate waypoints
     waypoints = np.zeros((nb_waypoints, 2))
     for i in range(nb_waypoints):
-        angle = section_angle * i
-        angle_rad = radians(angle)
+        angle = radians(section_angle * i)
 
-        if 0 <= angle and angle <= 90:
+        if 0 <= angle and angle <= radians(90):
             cos_x = radius * cos(angle)
             sin_y = radius * sin(angle)
             x_pos = x_start + (radius - cos_x)
@@ -42,8 +41,8 @@ def generate_circle_trajectory(nb_waypoints, diameter):
             waypoints[i, 0] = x_pos
             waypoints[i, 1] = y_pos
 
-        elif angle <= 180:
-            ang = angle - 90
+        elif angle <= radians(180):
+            ang = angle - radians(90)
             sin_x = radius * sin(ang)
             cos_y = radius * cos(ang)
             x_pos = x_start + (radius + sin_x)
@@ -51,8 +50,8 @@ def generate_circle_trajectory(nb_waypoints, diameter):
             waypoints[i, 0] = x_pos
             waypoints[i, 1] = y_pos
 
-        elif angle <= 270:
-            ang = angle - 180
+        elif angle <= radians(270):
+            ang = angle - radians(180)
             cos_x = radius * cos(ang)
             sin_y = radius * sin(ang)
             x_pos = x_start + (radius + cos_x)
@@ -60,8 +59,8 @@ def generate_circle_trajectory(nb_waypoints, diameter):
             waypoints[i, 0] = x_pos
             waypoints[i, 1] = y_pos
 
-        elif angle <= 360:
-            ang = angle - 270
+        elif angle <= radians(360):
+            ang = angle - radians(270)
             sin_x = radius * sin(ang)
             cos_y = radius * cos(ang)
             x_pos = x_start + (radius - sin_x)
@@ -84,7 +83,7 @@ if __name__ == '__main__':
     rospy.init_node('trajectory_circle', anonymous=True)
     node_rate = rospy.Rate(1)
     traj_pub = rospy.Publisher(TRAJ_REF_TOPIC, Trajectory, queue_size=10)
-    clear_queue = False  # Do not need to clear previous trajectory
+    clear_queue = True # Do not need to clear previous trajectory
 
     # Wait 5 secs to allow the ros node to initialise
     rospy.loginfo('Starting ros node ...')
@@ -95,7 +94,7 @@ if __name__ == '__main__':
     # Get drone odometery
     rospy.loginfo('Waiting for drone odom msg')
     drone_odom = rospy.wait_for_message(ODOM_TOPIC, Odometry)
-    rospy.loginfo(str(drom_odom))
+    rospy.loginfo(str(drone_odom))
 
     # Build trajectory
     rospy.loginfo('Generating circle trajectory')

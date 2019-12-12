@@ -1,8 +1,9 @@
 #!/usr/bin/env python
-from time import time
+import time
 
 import rospy
 from nav_msgs.msg import Odometry
+from geometry_msgs.msg import PoseWithCovarianceStamped
 
 ODOM_TOPIC = "/ucl_0/vrpn_client/estimated_odometry"
 VICON_TOPIC = "/vrpn_client_node/ucl_0/pose"
@@ -13,14 +14,13 @@ vicon_last_update = None
 
 
 def odom_cb(msg):
-    if odom_last_update is None:
-        odom_last_update = time()
+    global odom_last_update
+    odom_last_update = time.time()
 
 
 def vicon_cb(msg):
-    if vicon_last_update is None:
-        vicon_last_update = time()
-
+    global vicon_last_update
+    vicon_last_update = time.time()
 
 
 if __name__ == "__main__":
@@ -31,14 +31,16 @@ if __name__ == "__main__":
 
     while True:
         # Check odom
-        if (time() - odom_last_update) > timeout_threshold:
+        if odom_last_update and (time.time() - odom_last_update) > timeout_threshold:
             rospy.logerr("Odom is NOT PUBLISHING!")
+            exit(-1)
         else:
             rospy.loginfo("Odom is ok!")
 
         # Check vicon
-        if (time() - vicon_last_update) > timeout_threshold:
+        if vicon_last_update and (time.time() - vicon_last_update) > timeout_threshold:
             rospy.logerr("VICON is NOT PUBLISHING!")
+            exit(-1)
         else:
             rospy.loginfo("VICON is ok!")
 
