@@ -13,15 +13,15 @@ from aabm_comms.msg import Trajectory
 from aabm_comms.msg import Trajectory_sngl
 
 NB_WAYPOINTS = 1200
-CIRCLE_DIAMETER = 2.5
-TRAJ_ALTITUDE = 0.4
+CIRCLE_DIAMETER = 1.5 + 0.5
+TRAJ_ALTITUDE = 0.5
 TRAJ_REF_TOPIC = '/ucl_0/autopilot/TrajectoryReference'
 ODOM_TOPIC = '/ucl_0/vrpn_client/estimated_odometry'
 
 
 def generate_circle_trajectory(nb_waypoints, diameter):
     # Starting co-ordinates
-    x_start = 0.0
+    x_start = 0.25
     y_start = 0.0
 
     # Circle properties
@@ -96,7 +96,6 @@ if __name__ == '__main__':
     # Get drone odometery
     rospy.loginfo('Waiting for drone odom msg')
     drone_odom = rospy.wait_for_message(ODOM_TOPIC, Odometry)
-    rospy.loginfo(str(drone_odom))
 
     # Build trajectory
     rospy.loginfo('Generating circle trajectory')
@@ -116,7 +115,7 @@ if __name__ == '__main__':
     circle_traj.trajectory.append(traj_single)
     # -- Issuing a point for start point, to ensure it stays same always
     traj_single = Trajectory_sngl()
-    traj_single.position.x = 0.0
+    traj_single.position.x = 0.25
     traj_single.position.y = 0.0
     traj_single.position.z = TRAJ_ALTITUDE
     traj_single.yaw = 0
